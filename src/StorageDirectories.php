@@ -35,10 +35,13 @@ class StorageDirectories
             fwrite(STDERR, 'Creating storage directories: ' . implode(', ', $directories) . PHP_EOL);
         }
 
+        $oldumask = umask(0);
         foreach ($directories as $directory) {
-            if (! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+            if (! mkdir($directory, 0777, true) && ! is_dir($directory)) {
+                umask($oldumask);
                 throw new RuntimeException("Directory {$directory} could not be created");
             }
         }
+        umask($oldumask);
     }
 }
